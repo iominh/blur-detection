@@ -3,6 +3,7 @@ from imutils import paths
 import argparse
 import cv2
 import sys
+import shutil
 import os
 
 def variance_of_laplacian(image):
@@ -16,7 +17,11 @@ ap.add_argument("-i", "--images", required=True,
 	help="path to input directory of images")
 ap.add_argument("-t", "--threshold", type=float, default=100.0,
 	help="focus measures that fall below this value will be considered 'blurry'")
+ap.add_argument("-b", "--blurryPath", type=str, default="blurry",
+	help="Sets a path to move blurry images to")	
 args = vars(ap.parse_args())
+
+blurryPath = args["blurryPath"]
 
 # loop over the input images
 for imagePath in paths.list_images(args["images"]):
@@ -27,6 +32,9 @@ for imagePath in paths.list_images(args["images"]):
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	fm = variance_of_laplacian(gray)
 
+	head, tail = os.path.split(imagePath)
+	# print(head + " " + tail)
+
 	# if fm > args["threshold"]:
 	# 	text = imagePath+" - Not Blurry: "+str(fm)
 	# 	print(imagePath+" - Not Blurry: "+str(fm))
@@ -35,5 +43,6 @@ for imagePath in paths.list_images(args["images"]):
 	# then the image should be considered "blurry"
 	if fm < args["threshold"]:
 		text = imagePath+" - Blurry: "+str(fm)
-		os.remove(imagePath)
-		print(imagePath+" - Blurry: "+str(fm))
+		newImagePath = os.path.join(blurryPath, tail)
+		print("Moving from " + imagePath + " to " + newImagePath + " because " + str(fm))
+		shutil.move(imagePath, blurryPath + "/")

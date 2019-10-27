@@ -18,6 +18,8 @@ pip install imutils
 Place all your images sample in `images` folder (you can change the folder path later). After that, run this on your project folder. 
 ```bash
 python blur-detection.py --images images
+
+python3 blur-detection.py --images images --blurry blurry
 ```
 
 The output will be like these
