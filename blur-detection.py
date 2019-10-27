@@ -3,7 +3,8 @@ from imutils import paths
 import argparse
 import cv2
 import sys
- 
+import os
+
 def variance_of_laplacian(image):
 	# compute the Laplacian of the image and then return the focus
 	# measure, which is simply the variance of the Laplacian
@@ -26,12 +27,13 @@ for imagePath in paths.list_images(args["images"]):
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	fm = variance_of_laplacian(gray)
 
-	if fm > args["threshold"]:
-		text = imagePath+" - Not Blurry: "+str(fm)
-		print(imagePath+" - Not Blurry: "+str(fm))
+	# if fm > args["threshold"]:
+	# 	text = imagePath+" - Not Blurry: "+str(fm)
+	# 	print(imagePath+" - Not Blurry: "+str(fm))
  
 	# if the focus measure is less than the supplied threshold,
 	# then the image should be considered "blurry"
 	if fm < args["threshold"]:
 		text = imagePath+" - Blurry: "+str(fm)
+		os.remove(imagePath)
 		print(imagePath+" - Blurry: "+str(fm))
